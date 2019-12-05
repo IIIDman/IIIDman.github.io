@@ -1,39 +1,33 @@
-<html>
-<head>
-<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
-<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
-</head>
-<body>
-    <div id="root"></div>
-    <script type="text/babel">
-      
-    class Hello extends React.Component {
-          
-        constructor(){
-            super();
-            this.state = {
-                message: "my friend (from state)!"
-            };
-            this.updateMessage = this.updateMessage.bind(this);
-        }
+class Timer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { seconds: 0 };
+  }
 
-        updateMessage() {
-            this.setState({
-                message: "my friend (from changed state)!"
-            });
-        }
+  tick() {
+    this.setState(state => ({
+      seconds: state.seconds + 1
+    }));
+  }
 
-        render() {
-             return (
-               <div>
-                 <h1>Hello {this.state.message}!</h1>
-                 <button onClick={this.updateMessage}/>Click me!</button>
-               </div>
-            )
-        }
-    }
-      
-    </script>
-</body>
-</html>
+  componentDidMount() {
+    this.interval = setInterval(() => this.tick(), 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  render() {
+    return (
+      <div>
+        Seconds: {this.state.seconds}
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Timer />,
+  document.getElementById('timer-example')
+);
