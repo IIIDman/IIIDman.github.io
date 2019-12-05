@@ -8,60 +8,57 @@
     <div id="root"></div>
     <script type="text/babel">
 
-    var MenuExample = React.createClass({
+    var TimerExample = React.createClass({
 
         getInitialState: function(){
-            return { focused: 0 };
+
+            // Это выполняется перед функцией render. Возвращаемый объект
+            // присваивается в this.state, чтобы мы могли использовать его позже.
+
+            return { elapsed: 0 };
         },
 
-        clicked: function(index){
+        componentDidMount: function(){
 
-            // Обработчик клика обновит состояние
-            // изменив индекс на сфокусированный элемент меню
+            // componentDidMount вызывается react'ом, когда компонент
+            // был отрисован на странице. Мы можем установить интервал здесь:
 
-            this.setState({focused: index});
+            this.timer = setInterval(this.tick, 50);
+        },
+
+        componentWillUnmount: function(){
+
+            // Этот метод вызывается сразу после того, как компонент удален
+            // со страницы и уничтожен. Мы можем удалить интервал здесь:
+
+            clearInterval(this.timer);
+        },
+
+        tick: function(){
+
+            // Эта функция вызывается каждые 50мс. Она обновляет
+            // счетчик затраченного времени. Вызов setState заставляет компонент перерисовываться
+
+            this.setState({elapsed: new Date() - this.props.start});
         },
 
         render: function() {
-
-            // Здесь мы читаем свойство items, которое было передано
-            // атрибутом, при создании компонента
-
-            var self = this;
-
-            // Метод map пройдется по массиву элементов меню,
-            // и возвратит массив с <li> элементами.
-
-            return (
-                <div>
-                    <ul>{ this.props.items.map(function(m, index){
             
-                        var style = '';
-            
-                        if(self.state.focused == index){
-                            style = 'focused';
-                        }
-            
-                        // Обратите внимание на использование метода bind(). Он делает
-                        // index доступным в функции clicked:
-            
-                        return <li className={style} onClick={self.clicked.bind(self, index)}>{m}</li>;
-            
-                    }) }
-                            
-                    </ul>
-                    
-                    <p>Selected: {this.props.items[this.state.focused]}</p>
-                </div>
-            );
+            var elapsed = Math.round(this.state.elapsed / 100);
 
+            // Это даст нам число с одной цифрой после запятой dot (xx.x):
+            var seconds = (elapsed / 10).toFixed(1);
+
+            // Хоть мы и возвращаем целый <p> элемент, react разумно обновит
+            // только измененные части, содержащие переменную seconds.
+
+            return <p>This example was started <b>{seconds} seconds</b> ago.</p>;
         }
     });
 
-    // Отображаем компонент меню на странице, передав ему массив с элементами
 
     React.renderComponent(
-        <MenuExample items={ ['Home', 'Services', 'About', 'Contact us'] } />,
+        <TimerExample start={Date.now()} />,
         document.body
     );
 
