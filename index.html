@@ -1,31 +1,56 @@
-class Timer extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { seconds: 0 };
-  }
+var MenuExample = React.createClass({
 
-  tick() {
-    this.setState(state => ({
-      seconds: state.seconds + 1
-    }));
-  }
+    getInitialState: function(){
+        return { focused: 0 };
+    },
 
-  componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 1000);
-  }
+    clicked: function(index){
 
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
+        // Обработчик клика обновит состояние
+        // изменив индекс на сфокусированный элемент меню
 
-  render() {
-    return React.createElement(
-      'div',
-      null,
-      'Seconds: ',
-      this.state.seconds
-    );
-  }
-}
+        this.setState({focused: index});
+    },
 
-ReactDOM.render(React.createElement(Timer, null), document.getElementById('timer-example'));
+    render: function() {
+
+        // Здесь мы читаем свойство items, которое было передано
+        // атрибутом, при создании компонента
+
+        var self = this;
+
+        // Метод map пройдется по массиву элементов меню,
+        // и возвратит массив с <li> элементами.
+
+        return (
+            <div>
+                <ul>{ this.props.items.map(function(m, index){
+        
+                    var style = '';
+        
+                    if(self.state.focused == index){
+                        style = 'focused';
+                    }
+        
+                    // Обратите внимание на использование метода bind(). Он делает
+                    // index доступным в функции clicked:
+        
+                    return <li className={style} onClick={self.clicked.bind(self, index)}>{m}</li>;
+        
+                }) }
+                        
+                </ul>
+                
+                <p>Selected: {this.props.items[this.state.focused]}</p>
+            </div>
+        );
+
+    }
+});
+
+// Отображаем компонент меню на странице, передав ему массив с элементами
+
+React.renderComponent(
+    <MenuExample items={ ['Home', 'Services', 'About', 'Contact us'] } />,
+    document.body
+);
