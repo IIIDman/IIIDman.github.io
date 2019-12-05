@@ -1,56 +1,70 @@
-var MenuExample = React.createClass({
+<html>
+<head>
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
 
-    getInitialState: function(){
-        return { focused: 0 };
-    },
+    var MenuExample = React.createClass({
 
-    clicked: function(index){
+        getInitialState: function(){
+            return { focused: 0 };
+        },
 
-        // Обработчик клика обновит состояние
-        // изменив индекс на сфокусированный элемент меню
+        clicked: function(index){
 
-        this.setState({focused: index});
-    },
+            // Обработчик клика обновит состояние
+            // изменив индекс на сфокусированный элемент меню
 
-    render: function() {
+            this.setState({focused: index});
+        },
 
-        // Здесь мы читаем свойство items, которое было передано
-        // атрибутом, при создании компонента
+        render: function() {
 
-        var self = this;
+            // Здесь мы читаем свойство items, которое было передано
+            // атрибутом, при создании компонента
 
-        // Метод map пройдется по массиву элементов меню,
-        // и возвратит массив с <li> элементами.
+            var self = this;
 
-        return (
-            <div>
-                <ul>{ this.props.items.map(function(m, index){
-        
-                    var style = '';
-        
-                    if(self.state.focused == index){
-                        style = 'focused';
-                    }
-        
-                    // Обратите внимание на использование метода bind(). Он делает
-                    // index доступным в функции clicked:
-        
-                    return <li className={style} onClick={self.clicked.bind(self, index)}>{m}</li>;
-        
-                }) }
-                        
-                </ul>
-                
-                <p>Selected: {this.props.items[this.state.focused]}</p>
-            </div>
-        );
+            // Метод map пройдется по массиву элементов меню,
+            // и возвратит массив с <li> элементами.
 
-    }
-});
+            return (
+                <div>
+                    <ul>{ this.props.items.map(function(m, index){
+            
+                        var style = '';
+            
+                        if(self.state.focused == index){
+                            style = 'focused';
+                        }
+            
+                        // Обратите внимание на использование метода bind(). Он делает
+                        // index доступным в функции clicked:
+            
+                        return <li className={style} onClick={self.clicked.bind(self, index)}>{m}</li>;
+            
+                    }) }
+                            
+                    </ul>
+                    
+                    <p>Selected: {this.props.items[this.state.focused]}</p>
+                </div>
+            );
 
-// Отображаем компонент меню на странице, передав ему массив с элементами
+        }
+    });
 
-React.renderComponent(
-    <MenuExample items={ ['Home', 'Services', 'About', 'Contact us'] } />,
-    document.body
-);
+    // Отображаем компонент меню на странице, передав ему массив с элементами
+
+    React.renderComponent(
+        <MenuExample items={ ['Home', 'Services', 'About', 'Contact us'] } />,
+        document.body
+    );
+
+        </script>
+</body>
+</html>
