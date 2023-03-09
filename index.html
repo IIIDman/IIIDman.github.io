@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>dman's website</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script>
+      // Your p5.js code goes here
+      let cols, rows;
+      let grid;
+      let cellSize = 7;
+      // percentage of alive cells in the starting square
+      let centerStart = 0.3; 
+
+      function setup() {
+        createCanvas(windowWidth, windowHeight);
+        cols = floor(width / cellSize);
+        rows = floor(height / cellSize);
+        grid = createArray(cols, rows);
+        // randomly fill central 10x10 with 30% alive cells
+        for (let i = floor(cols * 0.45); i < floor(cols * 0.55); i++) {
+          for (let j = floor(rows * 0.45); j < floor(rows * 0.55); j++) {
+            if (random(1) < centerStart) {
+              grid[i][j] = 1;
+            }
+          }
+        }
+        frameRate(60);
+      }
+
+      function draw() {
+        background(255, 255, 255, 50);
+        // background(255);
+
+        // draw the cells
+        for (let i = 0; i < cols; i++) {
+          for (let j = 0; j < rows; j++) {
+            if (grid[i][j] == 1) {
+              // cell color
+              // fill(255, 0, 0);
+              fill(0);
+            } else {
+              fill(255);
+            }
+            // grid color
+            // stroke(0);
+            noStroke();
+            rect(i * cellSize, j * cellSize, cellSize, cellSize);
+          }
+        }
+
+        // generate the next generation
+        let next = createArray(cols, rows);
+        for (let i = 1; i < cols - 1; i++) {
+          for (let j = 1; j < rows - 1; j++) {
+            let aliveNeighbors = countAliveNeighbors(grid, i, j);
+            if (grid[i][j] == 1) {
+              if (aliveNeighbors >= 1 && aliveNeighbors <= 4) {
+                next[i][j] = 1;
+              } else {
+                next[i][j] = 0;
+              }
+            } else {
+              if (aliveNeighbors == 3) {
+                next[i][j] = 1;
+              } else {
+                next[i][j] = 0;
+              }
+            }
+          }
+        }
+        grid = next;
+      }
+
+      function countAliveNeighbors(grid, x, y) {
+        let count = 0;
+        for (let i = -1; i <= 1; i++) {
+          for (let j = -1; j <= 1; j++) {
+            if (i == 0 && j == 0) {
+              continue;
+            }
+            let col = (x + i + cols) % cols;
+            let row = (y + j + rows) % rows;
+            count += grid[col][row];
+          }
+        }
+        return count;
+      }
+
+      function createArray(cols, rows) {
+        let arr = new Array(cols);
+        for (let i = 0; i < arr.length; i++) {
+          arr[i] = new Array(rows);
+          arr[i].fill(0);
+        }
+        return arr;
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Your website content goes here -->
+    <link rel="stylesheet" href="style.css">
+
+    <div class="overlay">
+      <div class="text-container">
+        <h1>Dmitriy Tsarev</h1>
+        <p>Data Scientist</p>
+        <br>
+        <br>
+        <h2>Contact me</h2>
+        <ul>
+          <a href="mailto:tsarevdmit@gmail.com" class="link-1">tsarevdmit@gmail.com</a>
+          <br>
+          Telegram: <a href="https://t.me/cxbrv" class="link-1" target="_blank">@cxbrv</a>
+        </ul>
+        <i>
+          Btw the background is <a href="https://en.wikipedia.org/wiki/Cellular_automaton" class="link-2" target="_blank">cellular automata</a>
+        </i>
+      </div>
+    </div>
+
+  </body>
+</html>
