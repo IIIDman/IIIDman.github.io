@@ -161,8 +161,3 @@ i {
   font-size: 1.2em;
   margin-bottom: 0.1px;
 }
-
-.overlay h1, .overlay p, .overlay h2, .overlay a, .overlay ul {
-  /* Adjust the base font size to use a combination of vw and vh */
-  font-size: calc(1vw + 1vh);
-}
