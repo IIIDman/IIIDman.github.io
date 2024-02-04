@@ -151,3 +151,18 @@ i {
   font-size: 1rem;
   text-align: center;
 }
+
+.main-topics p {
+  margin-bottom: 1px; /* Reduces space between lines */
+}
+
+/* This targets any <p> tag within the .hobbies div */
+.hobbies p {
+  font-size: 1.2em;
+  margin-bottom: 0.1px;
+}
+
+.overlay h1, .overlay p, .overlay h2, .overlay a, .overlay ul {
+  /* Adjust the base font size to use a combination of vw and vh */
+  font-size: calc(1vw + 1vh);
+}
