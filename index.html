@@ -4,51 +4,81 @@
     <title>HIRE ME PLS 🤓</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
     <script>
-      // Your p5.js code goes here
       let cols, rows;
       let grid;
       let cellSize = 7;
-      // percentage of alive cells in the starting square
-      let centerStart = 0.3; 
+      let centerStart = 0.3;
+      let gravity = false;
+
+      function adjustTextSize() {
+        const baseSize = 16; 
+        const minWidthScale = 1024;
+        const minHeightScale = 768;
+        const minFontSizeWide = 8;
+        const minFontSizeTall = 14;
+
+        const widthScaleFactor = Math.min(window.innerWidth / 1024, window.innerHeight / 768, 1);
+        const heightScaleFactor = window.innerHeight / minHeightScale;
+
+        let scaleFactor;
+        if (window.innerWidth > window.innerHeight) {
+          scaleFactor = widthScaleFactor;
+          minFontSize = minFontSizeWide;
+        } else {
+          scaleFactor = Math.max(widthScaleFactor * 0.5 + heightScaleFactor * 0.5, 0.75);
+          minFontSize = minFontSizeTall;
+        }
+
+        const newSize = Math.max(baseSize * scaleFactor, minFontSize);
+        document.documentElement.style.fontSize = `${newSize}px`;
+      }
 
       function setup() {
         createCanvas(windowWidth, windowHeight);
         cols = floor(width / cellSize);
         rows = floor(height / cellSize);
         grid = createArray(cols, rows);
-        // randomly fill central 10x10 with 30% alive cells
         for (let i = floor(cols * 0.45); i < floor(cols * 0.55); i++) {
-          for (let j = floor(rows * 0.45); j < floor(rows * 0.55); j++) {
-            if (random(1) < centerStart) {
-              grid[i][j] = 1;
+            for (let j = floor(rows * 0.45); j < floor(rows * 0.55); j++) {
+                if (random(1) < centerStart) {
+                    grid[i][j] = 1;
+                }
             }
-          }
         }
         frameRate(60);
+
+        let gravityButton = createButton("❌ DON'T CLICK 😈");
+        gravityButton.mousePressed(toggleGravity);
+        gravityButton.addClass('btn');
+        gravityButton.style('display', 'block'); 
+        gravityButton.style('margin', '20px auto');
+        gravityButton.style('z-index', '1000');
+        document.getElementById('button-container').appendChild(gravityButton.elt);
+        adjustTextSize();
       }
 
       function draw() {
         background(255, 255, 255, 50);
-        // background(255);
-
-        // draw the cells
         for (let i = 0; i < cols; i++) {
           for (let j = 0; j < rows; j++) {
             if (grid[i][j] == 1) {
-              // cell color
-              // fill(255, 0, 0);
               fill(0);
             } else {
               fill(255);
             }
-            // grid color
-            // stroke(0);
             noStroke();
             rect(i * cellSize, j * cellSize, cellSize, cellSize);
           }
         }
 
-        // generate the next generation
+        if (!gravity) {
+          updateAutomaton();
+        } else {
+          applyGravity();
+        }
+      }
+
+      function updateAutomaton() {
         let next = createArray(cols, rows);
         for (let i = 1; i < cols - 1; i++) {
           for (let j = 1; j < rows - 1; j++) {
@@ -71,13 +101,22 @@
         grid = next;
       }
 
+      function applyGravity() {
+        for (let i = 0; i < cols; i++) {
+          for (let j = rows - 2; j >= 0; j--) {
+            if (grid[i][j] == 1 && grid[i][j + 1] == 0) {
+              grid[i][j] = 0;
+              grid[i][j + 1] = 1;
+            }
+          }
+        }
+      }
+
       function countAliveNeighbors(grid, x, y) {
         let count = 0;
         for (let i = -1; i <= 1; i++) {
           for (let j = -1; j <= 1; j++) {
-            if (i == 0 && j == 0) {
-              continue;
-            }
+            if (i == 0 && j == 0) continue;
             let col = (x + i + cols) % cols;
             let row = (y + j + rows) % rows;
             count += grid[col][row];
@@ -94,12 +133,17 @@
         }
         return arr;
       }
+
+      function toggleGravity() {
+        gravity = !gravity;
+      }
+      
+      window.addEventListener('resize', adjustTextSize);
+      document.addEventListener('DOMContentLoaded', adjustTextSize);
     </script>
   </head>
   <body>
-    <!-- Your website content goes here -->
     <link rel="stylesheet" href="style.css">
-
     <div class="overlay">
       <div class="text-container">
         <h1>Dmitriy Tsarev</h1>
@@ -109,8 +153,7 @@
             <p>Botting</p>
             <p>Crypto</p>
         </div>
-        <br>
-        <br>
+        <div id="button-container"></div>
         <h2>Hobbies</h2>
         <div class="hobbies">
           <p>Capture The Flag 🏁</p>
@@ -130,6 +173,5 @@
         </i> -->
       </div>
     </div>
-
   </body>
 </html>
